@@ -1,0 +1,500 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RETT Restaurant - Détails de votre réservation" />
+    <title>Détails de la Réservation | RETT Restaurant</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'restaurant/images/favicon.png' %}" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'restaurant/css/mes-reservations.css' %}" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+      body {
+        background: #000;
+        color: #fff;
+        font-family: 'Roboto', Arial, sans-serif;
+        min-height: 100vh;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        width: 100%;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 10px 60px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .reservation-details-container {
+        background: #fff;
+        color: #222;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+        padding: 2.5rem 2rem;
+        margin-top: 40px;
+        width: 100%;
+        max-width: 700px;
+        position: relative;
+      }
+      .reservation-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2rem;
+        color: #c0392b;
+        margin-bottom: 0.5rem;
+      }
+      .reservation-header .reservation-number {
+        color: #888;
+        font-size: 1rem;
+      }
+      .reservation-status.status-confirmed {
+        position: absolute;
+        top: 24px;
+        right: 32px;
+        background: #e6f7e7;
+        color: #28a745;
+        padding: 0.3rem 1.2rem;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 1rem;
+        z-index: 2;
+      }
+      .detail-section h3 {
+        color: #c0392b;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        font-family: 'Playfair Display', serif;
+      }
+      .detail-label {
+        color: #888;
+        font-size: 0.95rem;
+      }
+      .detail-value {
+        color: #222;
+        font-size: 1.05rem;
+        font-weight: 500;
+      }
+      .special-requests {
+        background: #f8f9fa;
+        color: #333;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+      .action-section {
+        margin-top: 2rem;
+        border-top: 1px solid #eee;
+        padding-top: 1.5rem;
+      }
+      .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+      .btn {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        text-decoration: none;
+        text-align: center;
+      }
+      .primary-btn, .btn.primary-btn, #pay-btn {
+        background: #c0392b;
+        color: #fff;
+        border: none;
+      }
+      .primary-btn:hover, .btn.primary-btn:hover, #pay-btn:hover {
+        background: #a53125;
+        color: #fff;
+      }
+      .secondary-btn {
+        background: #fff;
+        color: #c0392b;
+        border: 2px solid #c0392b;
+      }
+      .secondary-btn:hover {
+        background: #f8d7da;
+        color: #a53125;
+      }
+      .cancel-btn {
+        background: #fff;
+        color: #c0392b;
+        border: 2px solid #c0392b;
+      }
+      .cancel-btn:hover {
+        background: #f8d7da;
+        color: #a53125;
+      }
+      .back-link {
+        color: #fff;
+        margin-bottom: 1.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1rem;
+      }
+      .back-link:hover {
+        color: #c0392b;
+      }
+      header, footer {
+        background: transparent;
+        color: #fff;
+      }
+      .navbar .logo h1 {
+        color: #fff;
+      }
+      .navbar .tagline {
+        color: #ccc;
+      }
+      .nav-links a {
+        color: #fff;
+        font-weight: 500;
+        text-decoration: none;
+        margin-right: 1rem;
+        transition: color 0.2s;
+      }
+      .nav-links a.active, .nav-links a:hover {
+        color: #c0392b;
+      }
+      .user-actions .btn.login-btn {
+        background: #fff;
+        color: #c0392b;
+        border: 2px solid #c0392b;
+      }
+      .user-actions .btn.login-btn:hover {
+        background: #c0392b;
+        color: #fff;
+      }
+      @media (max-width: 900px) {
+        .reservation-details-container {
+          padding: 1.2rem 0.5rem;
+        }
+        .container {
+          padding: 20px 2px 40px 2px;
+        }
+      }
+      .edit-section, .cancel-section {
+        display: none;
+        margin-top: 2rem;
+        padding: 1.5rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+      }
+      .edit-section.show, .cancel-section.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header avec navigation -->
+    <header>
+      <div class="navbar">
+        <div class="logo">
+          <h1>RETT Restaurant</h1>
+          <p class="tagline">Cuisine tunisienne authentique</p>
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        
+        <nav>
+          <ul class="nav-links">
+            <li><a href="{% url 'index' %}"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="{% url 'index' %}#menu"><i class="fas fa-utensils"></i> Menu</a></li>
+            <li><a href="{% url 'index' %}#reserve"><i class="fas fa-calendar-alt"></i> Réserver</a></li>
+            <li><a href="{% url 'reservations' %}" class="active"><i class="fas fa-list-check"></i> Mes réservations</a></li>
+            <li><a href="{% url 'index' %}#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Boutons de connexion dans la navbar -->
+        <div class="user-actions">
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn login-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+          {% else %}
+            <a href="{% url 'login_page' %}" class="btn login-btn"><i class="fas fa-user"></i> Connexion</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <section class="reservation-section">
+        <div class="container">
+          {% if user.is_authenticated %}
+            <div class="reservation-details-container">
+              <div class="reservation-header">
+                <div>
+                  <h2>Détails de votre réservation</h2>
+                  <span class="reservation-number">RES-{{ reservation.id }}</span>
+                </div>
+                <span class="reservation-status status-{{ reservation.status }}">{{ reservation.get_status_display }}</span>
+              </div>
+              
+              <!-- Détails de la réservation -->
+              <div class="detail-section">
+                <h3><i class="fas fa-calendar-alt"></i> Date et heure</h3>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value">{{ reservation.date|date:"l d F Y" }}</span>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <span class="detail-label">Heure</span>
+                    <span class="detail-value">{{ reservation.time|time:"H:i" }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="detail-section">
+                <h3><i class="fas fa-user-friends"></i> Informations de réservation</h3>
+                <div class="detail-grid">
+                  <div class="detail-item">
+                    <span class="detail-label">Nombre de personnes</span>
+                    <span class="detail-value">{{ reservation.number_of_guests }} personne{{ reservation.number_of_guests|pluralize }}</span>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <span class="detail-label">Zone</span>
+                    <span class="detail-value">{{ reservation.get_zone_display }}</span>
+                  </div>
+                  
+                  <div class="detail-item">
+                    <span class="detail-label">Occasion</span>
+                    <span class="detail-value">{{ reservation.get_occasion_display|default:"-" }}</span>
+                  </div>
+                </div>
+                
+                {% if reservation.special_requests %}
+                <div class="special-requests">
+                  <span class="detail-label">Demandes spéciales</span>
+                  <p>{{ reservation.special_requests }}</p>
+                </div>
+                {% endif %}
+              </div>
+              
+              <!-- Section pour les actions -->
+              <div class="action-section">
+                <div id="deadline-info" class="deadline-info">
+                  <i class="fas fa-info-circle"></i>
+                  {% if can_modify %}
+                    Vous pouvez modifier ou annuler votre réservation jusqu'à 24 heures avant l'heure prévue.
+                  {% else %}
+                    <strong>Attention !</strong> Votre réservation est prévue dans moins de 24 heures. 
+                    Les modifications et annulations ne sont plus possibles en ligne. 
+                    Veuillez nous contacter par téléphone au 01 23 45 67 89 pour toute demande urgente.
+                  {% endif %}
+                </div>
+                
+                <div class="action-buttons">
+                  {% if can_modify %}
+                    <button class="btn secondary-btn" id="edit-btn" onclick="toggleEditSection()">
+                      <i class="fas fa-pencil-alt"></i> Modifier la réservation
+                    </button>
+                    <button class="btn cancel-btn" id="cancel-btn" onclick="toggleCancelSection()">
+                      <i class="fas fa-times"></i> Annuler la réservation
+                    </button>
+                  {% endif %}
+                  {% if not reservation.is_paid %}
+                    <a href="{% url 'payment' reservation.id %}" class="btn primary-btn" id="pay-btn">
+                      <i class="fas fa-credit-card"></i> Procéder au paiement
+                    </a>
+                  {% endif %}
+                </div>
+                
+                <!-- Section pour la modification -->
+                <div class="edit-section" id="edit-section">
+                  <h3>Modifier votre réservation</h3>
+                  
+                  <form id="edit-form" method="POST" action="{% url 'reservation_update' reservation.id %}">
+                    {% csrf_token %}
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="edit-date">Date</label>
+                        <input type="date" id="edit-date" name="date" value="{{ reservation.date|date:'Y-m-d' }}" required />
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="edit-time">Heure</label>
+                        <input type="time" id="edit-time" name="time" value="{{ reservation.time|time:'H:i' }}" required />
+                      </div>
+                    </div>
+                    
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="edit-guests">Nombre de personnes</label>
+                        <select id="edit-guests" name="number_of_guests" required>
+                          {% for i in "123456"|make_list %}
+                            <option value="{{ i }}" {% if reservation.number_of_guests == i %}selected{% endif %}>{{ i }} personne{{ i|pluralize }}</option>
+                          {% endfor %}
+                          <option value="more">Plus de 6 personnes</option>
+                        </select>
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="edit-zone">Zone</label>
+                        <select id="edit-zone" name="zone" required>
+                          {% for value, label in zone_choices %}
+                            <option value="{{ value }}" {% if reservation.zone == value %}selected{% endif %}>{{ label }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="edit-occasion">Occasion</label>
+                      <select id="edit-occasion" name="occasion">
+                        <option value="">Sélectionner (optionnel)</option>
+                        {% for value, label in occasion_choices %}
+                          <option value="{{ value }}" {% if reservation.occasion == value %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="edit-requests">Demandes spéciales</label>
+                      <textarea id="edit-requests" name="special_requests" placeholder="Allergies, préférences ou autres demandes spéciales">{{ reservation.special_requests }}</textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                      <button type="button" class="btn secondary-btn" onclick="toggleEditSection()">Annuler</button>
+                      <button type="submit" class="btn primary-btn">Enregistrer les modifications</button>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- Section pour l'annulation -->
+                <div class="cancel-section" id="cancel-section">
+                  <h3>Annuler votre réservation</h3>
+                  
+                  <div class="cancel-confirmation">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h4>Êtes-vous sûr de vouloir annuler cette réservation ?</h4>
+                    <p>Cette action est irréversible. Votre table sera libérée pour d'autres clients.</p>
+                  </div>
+                  
+                  <form method="POST" action="{% url 'reservation_cancel' reservation.id %}">
+                    {% csrf_token %}
+                    <div class="form-actions">
+                      <button type="button" class="btn secondary-btn" onclick="toggleCancelSection()">Retour</button>
+                      <button type="submit" class="btn cancel-btn">Confirmer l'annulation</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="login-required">
+              <h2>Connexion requise</h2>
+              <p>Veuillez vous connecter pour accéder à vos réservations.</p>
+              <a href="{% url 'login_page' %}" class="btn primary-btn">Se connecter</a>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h3>RETT Restaurant</h3>
+            <p>Cuisine tunisienne authentique</p>
+          </div>
+          
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4>Menu</h4>
+              <ul>
+                <li><a href="{% url 'index' %}#about">À propos</a></li>
+                <li><a href="{% url 'index' %}#menu">Menu</a></li>
+                <li><a href="{% url 'index' %}#reserve">Réservation</a></li>
+                <li><a href="{% url 'reservations' %}">Mes réservations</a></li>
+                <li><a href="{% url 'index' %}#contact">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div class="footer-column">
+              <h4>Légal</h4>
+              <ul>
+                <li><a href="#">Mentions légales</a></li>
+                <li><a href="#">Politique de confidentialité</a></li>
+                <li><a href="#">CGV</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; {% now "Y" %} RETT Restaurant. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Mobile menu toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        if (mobileMenu) {
+          mobileMenu.addEventListener('click', function() {
+            navLinks.classList.toggle('show');
+            mobileMenu.classList.toggle('active');
+          });
+        }
+      });
+      
+      // Afficher/masquer la section de modification
+      function toggleEditSection() {
+        const editSection = document.getElementById('edit-section');
+        if (editSection) {
+          editSection.classList.toggle('show');
+          // Hide cancel section if open
+          const cancelSection = document.getElementById('cancel-section');
+          if (cancelSection) cancelSection.classList.remove('show');
+        }
+      }
+      
+      // Afficher/masquer la section d'annulation
+      function toggleCancelSection() {
+        const cancelSection = document.getElementById('cancel-section');
+        if (cancelSection) {
+          cancelSection.classList.toggle('show');
+          // Hide edit section if open
+          const editSection = document.getElementById('edit-section');
+          if (editSection) editSection.classList.remove('show');
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,274 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RETT Restaurant - Connexion et Inscription" />
+    <title>RETT Restaurant | Connexion</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'restaurant/favicon.png' %}" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="{% static 'restaurant/connexion.css' %}" />
+  </head>
+  <body>
+    <!-- Header avec navigation -->
+    <header>
+      <div class="navbar">
+        <div class="logo">
+          <h1>RETT Restaurant</h1>
+          <p class="tagline">Cuisine tunisienne authentique</p>
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        
+        <nav>
+          <ul class="nav-links">
+            <li><a href="{% url 'index' %}#hero"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="{% url 'index' %}#menu"><i class="fas fa-utensils"></i> Menu</a></li>
+            <li><a href="{% url 'index' %}#reserve"><i class="fas fa-calendar-alt"></i> Réserver</a></li>
+            <li><a href="{% url 'reservations' %}"><i class="fas fa-list-check"></i> Mes réservations</a></li>
+            <li><a href="{% url 'index' %}#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Boutons de connexion cachés car on est sur la page de connexion -->
+      </div>
+    </header>
+
+    <!-- Page d'authentification -->
+    <main class="auth-page">
+      <div class="container">
+        <div class="auth-container">
+          <!-- Section Connexion -->
+          <div class="auth-section">
+            <h2 class="auth-title">Connexion</h2>
+            <p class="auth-subtitle">Accédez à votre compte pour gérer vos réservations</p>
+            
+            <form id="login-form" class="auth-form">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="login-email">Email</label>
+                <input type="email" id="login-email" name="email" placeholder="Votre adresse email" required />
+              </div>
+              
+              <div class="form-group">
+                <label for="login-password">Mot de passe</label>
+                <input type="password" id="login-password" name="password" placeholder="Votre mot de passe" required />
+                <div class="forgot-password">
+                  <a href="#" id="forgot-password-link">Mot de passe oublié ?</a>
+                </div>
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="remember-me" name="remember-me" />
+                <label for="remember-me">Se souvenir de moi</label>
+              </div>
+              
+              <button type="submit" class="btn primary-btn">Se connecter</button>
+              <div id="login-error" class="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+            </form>
+            
+            <div class="divider">
+              <span>OU</span>
+            </div>
+            
+            <div class="social-auth">
+              <button class="social-btn facebook">
+                <i class="fab fa-facebook-f"></i> Continuer avec Facebook
+              </button>
+              <button class="social-btn google">
+                <i class="fab fa-google"></i> Continuer avec Google
+              </button>
+            </div>
+            
+            <div class="auth-footer">
+              <p>Vous n'avez pas encore de compte ? <a href="#" id="show-register">Créer un compte</a></p>
+            </div>
+          </div>
+          
+          <!-- Section Inscription (Cette partie est à ajouter si vous voulez une page combinée connexion/inscription) -->
+          <div class="auth-section" id="register-section">
+            <h2 class="auth-title">Créer un compte</h2>
+            <p class="auth-subtitle">Rejoignez-nous pour profiter de nos services exclusifs</p>
+            
+            <form id="register-form" class="auth-form">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="register-name">Nom complet</label>
+                <input type="text" id="register-name" name="name" placeholder="Votre nom complet" required />
+              </div>
+              
+              <div class="form-group">
+                <label for="register-email">Email</label>
+                <input type="email" id="register-email" name="email" placeholder="Votre adresse email" required />
+              </div>
+              
+              <div class="form-group">
+                <label for="register-password">Mot de passe</label>
+                <input type="password" id="register-password" name="password" placeholder="Choisissez un mot de passe" required />
+              </div>
+              
+              <div class="form-group">
+                <label for="register-confirm-password">Confirmer le mot de passe</label>
+                <input type="password" id="register-confirm-password" name="confirm-password" placeholder="Confirmez votre mot de passe" required />
+              </div>
+              
+              <div class="checkbox-group">
+                <input type="checkbox" id="terms" name="terms" required />
+                <label for="terms">J'accepte les <a href="#">termes et conditions</a></label>
+              </div>
+              
+              <button type="submit" class="btn primary-btn">S'inscrire</button>
+              <div id="register-error" class="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+            </form>
+            
+            <div class="auth-footer">
+              <p>Vous avez déjà un compte ? <a href="#" id="show-login">Se connecter</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Script pour le menu mobile et les interactions -->
+    <script>
+      // Toggle menu mobile
+      document.getElementById('mobile-menu').addEventListener('click', function() {
+        document.querySelector('.nav-links').classList.toggle('active');
+      });
+      
+      // Afficher/masquer les sections de connexion et d'inscription
+      document.getElementById('show-register').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('register-section').style.display = 'block';
+        document.getElementById('login-form').parentElement.style.display = 'none';
+      });
+      
+      document.getElementById('show-login').addEventListener('click', function(e) {
+        e.preventDefault();
+        document.getElementById('register-section').style.display = 'none';
+        document.getElementById('login-form').parentElement.style.display = 'block';
+      });
+      
+      // Initialiser avec la section d'inscription masquée
+      document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('register-section').style.display = 'none';
+      });
+
+      // Get CSRF token from cookie
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      // Login form logic
+      document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorElement = document.getElementById('login-error');
+        
+        fetch('{% url "api_login" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            // Set authentication flag
+            localStorage.setItem('isAuthenticated', 'true');
+            
+            // Redirect after login
+            const redirectTo = localStorage.getItem('redirectAfterLogin') || '{% url "reservations" %}';
+            localStorage.removeItem('redirectAfterLogin');
+            window.location.href = redirectTo;
+          } else {
+            errorElement.textContent = data.message || 'Erreur de connexion. Veuillez vérifier vos identifiants.';
+            errorElement.style.display = 'block';
+          }
+        })
+        .catch(error => {
+          errorElement.textContent = 'Une erreur est survenue. Veuillez réessayer plus tard.';
+          errorElement.style.display = 'block';
+          console.error('Error:', error);
+        });
+      });
+      
+      // Register form logic
+      document.getElementById('register-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('register-name').value;
+        const email = document.getElementById('register-email').value;
+        const password = document.getElementById('register-password').value;
+        const confirmPassword = document.getElementById('register-confirm-password').value;
+        const errorElement = document.getElementById('register-error');
+        
+        // Check if passwords match
+        if (password !== confirmPassword) {
+          errorElement.textContent = 'Les mots de passe ne correspondent pas.';
+          errorElement.style.display = 'block';
+          return;
+        }
+        
+        fetch('{% url "api_register" %}', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrftoken,
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            // Set authentication flag
+            localStorage.setItem('isAuthenticated', 'true');
+            
+            // Redirect after registration
+            window.location.href = '{% url "reservations" %}';
+          } else {
+            errorElement.textContent = data.message || 'Erreur d\'inscription. Veuillez réessayer.';
+            errorElement.style.display = 'block';
+          }
+        })
+        .catch(error => {
+          errorElement.textContent = 'Une erreur est survenue. Veuillez réessayer plus tard.';
+          errorElement.style.display = 'block';
+          console.error('Error:', error);
+        });
+      });
+    </script>
+  </body>
+</html>

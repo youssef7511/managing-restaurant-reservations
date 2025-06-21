@@ -1,0 +1,890 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RETT Restaurant - Paiement de votre réservation" />
+    <title>Paiement | RETT Restaurant</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'restaurant/images/favicon.png' %}" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'restaurant/css/payement.css' %}" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <style>
+      /* Styles spécifiques à la page de paiement */
+      .payment-section {
+        padding: 80px 0;
+        background-color: #f9f9f9;
+      }
+      
+      .payment-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 15px;
+      }
+      
+      .payment-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+      
+      .payment-info {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+      }
+      
+      .payment-summary {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        align-self: start;
+      }
+      
+      .payment-methods {
+        margin-bottom: 30px;
+      }
+      
+      .payment-method-tabs {
+        display: flex;
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 20px;
+      }
+      
+      .payment-method-tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        border-bottom: 2px solid transparent;
+      }
+      
+      .payment-method-tab.active {
+        border-bottom: 2px solid #d4af37;
+        color: #d4af37;
+      }
+      
+      .payment-method-content {
+        display: none;
+      }
+      
+      .payment-method-content.active {
+        display: block;
+      }
+      
+      .card-icons {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      
+      .card-icon {
+        width: 40px;
+        height: 25px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+      }
+      
+      .card-form {
+        margin-bottom: 30px;
+      }
+      
+      .form-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 15px;
+      }
+      
+      .form-group {
+        flex: 1;
+      }
+      
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        font-size: 14px;
+        color: #555;
+      }
+      
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+      }
+      
+      .form-group input:focus,
+      .form-group select:focus {
+        border-color: #d4af37;
+        outline: none;
+      }
+      
+      .card-input-container {
+        position: relative;
+      }
+      
+      .card-input-container i {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+      }
+      
+      .security-options {
+        margin-bottom: 20px;
+      }
+      
+      .security-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .security-option input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #d4af37;
+      }
+      
+      .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+      
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        font-weight: 700;
+        font-size: 18px;
+      }
+      
+      .summary-details {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+      }
+      
+      .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 14px;
+      }
+      
+      .payment-actions {
+        margin-top: 30px;
+      }
+      
+      .btn.pay-btn {
+        background-color: #d4af37;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .btn.pay-btn:hover {
+        background-color: #c69c38;
+      }
+      
+      .secure-notice {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 15px;
+        color: #555;
+        font-size: 14px;
+      }
+      
+      .payment-help {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 14px;
+        color: #666;
+      }
+      
+      .payment-help a {
+        color: #d4af37;
+        text-decoration: none;
+      }
+      
+      .reservation-item {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+      }
+      
+      .reservation-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      
+      .mobile-pay-img {
+        width: 120px;
+        height: auto;
+        display: block;
+        margin: 10px auto;
+      }
+      
+      .payment-option {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      
+      .payment-option:hover {
+        border-color: #d4af37;
+      }
+      
+      .payment-option.selected {
+        border-color: #d4af37;
+        background-color: rgba(212, 175, 55, 0.05);
+      }
+      
+      .payment-option input[type="radio"] {
+        margin-right: 10px;
+        accent-color: #d4af37;
+      }
+      
+      .payment-logo {
+        margin-left: auto;
+        width: 50px;
+        height: auto;
+      }
+      
+      .transfer-details {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 6px;
+        margin-top: 15px;
+        font-size: 14px;
+      }
+      
+      .transfer-detail {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      
+      .transfer-detail-value {
+        font-weight: 500;
+      }
+      
+      .copy-btn {
+        background-color: transparent;
+        border: none;
+        color: #d4af37;
+        cursor: pointer;
+        font-size: 14px;
+        padding: 0;
+        margin-left: 5px;
+      }
+      
+      @media (max-width: 768px) {
+        .payment-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .form-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+      }
+      
+      /* Styles pour le formulaire de coupon */
+      .coupon-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      
+      .coupon-form input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+      
+      .coupon-form button {
+        background-color: #555;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0 15px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      
+      .coupon-form button:hover {
+        background-color: #333;
+      }
+      
+      /* Modal styles */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+      }
+      
+      .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      .success-modal {
+        background-color: white;
+        border-radius: 10px;
+        padding: 30px;
+        text-align: center;
+        max-width: 400px;
+        width: 90%;
+        transform: translateY(20px);
+        transition: all 0.3s ease;
+      }
+      
+      .modal-overlay.active .success-modal {
+        transform: translateY(0);
+      }
+      
+      .success-icon {
+        font-size: 60px;
+        color: #28a745;
+        margin-bottom: 20px;
+      }
+      
+      .success-title {
+        font-size: 24px;
+        margin-bottom: 15px;
+        color: #333;
+      }
+      
+      .success-message {
+        color: #666;
+        margin-bottom: 25px;
+      }
+      
+      .success-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header avec navigation -->
+    <header>
+      <div class="navbar">
+        <div class="logo">
+          <h1>RETT Restaurant</h1>
+          <p class="tagline">Cuisine tunisienne authentique</p>
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        
+        <nav>
+          <ul class="nav-links">
+            <li><a href="{% url 'index' %}"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="{% url 'index' %}#menu"><i class="fas fa-utensils"></i> Menu</a></li>
+            <li><a href="{% url 'index' %}#reserve"><i class="fas fa-calendar-alt"></i> Réserver</a></li>
+            <li><a href="{% url 'reservations' %}"><i class="fas fa-list-check"></i> Mes réservations</a></li>
+            <li><a href="{% url 'index' %}#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Boutons de connexion déplacés dans la navbar -->
+        <div class="user-actions">
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn login-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+          {% else %}
+            <a href="{% url 'login_page' %}" class="btn login-btn"><i class="fas fa-user"></i> Connexion</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <section class="payment-section">
+        <div class="payment-container">
+          <h2><i class="fas fa-credit-card"></i> Paiement</h2>
+          
+          <div class="payment-grid">
+            <div class="payment-info">
+              <div class="reservation-item">
+                <div class="reservation-header">
+                  <h3>Votre réservation</h3>
+                  <span class="reservation-id">RES-{{ reservation.id }}</span>
+                </div>
+                
+                <div class="reservation-details">
+                  <div class="detail-row">
+                    <span>Date et heure</span>
+                    <span>{{ reservation.date|date:"d F Y" }} - {{ reservation.time|time:"H:i" }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>Nombre de personnes</span>
+                    <span>{{ reservation.number_of_guests }} personnes</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>Zone</span>
+                    <span>{{ reservation.zone }}</span>
+                  </div>
+                  <div class="detail-row">
+                    <span>Occasion</span>
+                    <span>{{ reservation.occasion }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="payment-methods">
+                <h3>Méthode de paiement</h3>
+                
+                <div class="payment-method-tabs">
+                  <div class="payment-method-tab active" data-tab="credit-card">
+                    <i class="fas fa-credit-card"></i> Carte bancaire
+                  </div>
+            
+                </div>
+                
+                <!-- Contenu paiement carte bancaire -->
+                <div class="payment-method-content active" id="credit-card-content">
+                  <div class="card-icons">
+                    <div class="card-icon"><i class="fab fa-cc-visa"></i></div>
+                    <div class="card-icon"><i class="fab fa-cc-mastercard"></i></div>
+                    <div class="card-icon"><i class="fab fa-cc-amex"></i></div>
+                  </div>
+                  
+                  <form class="card-form" method="POST" action="{% url 'payment_process' reservation.id %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                      <label for="cardholder">Nom sur la carte</label>
+                      <input type="text" id="cardholder" name="cardholder" placeholder="Nom complet" required />
+                    </div>
+                    
+                    <div class="form-group">
+                      <label for="cardnumber">Numéro de carte</label>
+                      <div class="card-input-container">
+                        <input type="text" id="cardnumber" name="cardnumber" placeholder="1234 5678 9012 3456" required />
+                        <i class="fas fa-credit-card"></i>
+                      </div>
+                    </div>
+                    
+                    <div class="form-row">
+                      <div class="form-group">
+                        <label for="expiry">Date d'expiration</label>
+                        <input type="text" id="expiry" name="expiry" placeholder="MM/AA" required />
+                      </div>
+                      
+                      <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <div class="card-input-container">
+                          <input type="text" id="cvv" name="cvv" placeholder="123" required />
+                          <i class="fas fa-question-circle" title="Le code à 3 chiffres au dos de votre carte"></i>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="security-options">
+                      <div class="security-option">
+                        <input type="checkbox" id="save-card" name="save_card" />
+                        <label for="save-card">Sauvegarder cette carte pour les prochains paiements</label>
+                      </div>
+                    </div>
+                    
+                    <div class="payment-actions">
+                      <button type="submit" class="btn pay-btn">
+                        <i class="fas fa-lock"></i> Payer maintenant
+                      </button>
+                    </div>
+                  </form>
+                </div>
+                
+                <!-- Contenu paiement mobile -->
+                <div class="payment-method-content" id="mobile-pay-content">
+                  <div class="mobile-pay-options">
+                    <div class="payment-option selected">
+                      <input type="radio" name="mobile-method" id="d17" checked />
+                      <label for="d17">D17</label>
+                      <img src="https://via.placeholder.com/50x30?text=D17" alt="D17" class="payment-logo" />
+                    </div>
+                    
+                    <div class="payment-option">
+                      <input type="radio" name="mobile-method" id="tlc-pay" />
+                      <label for="tlc-pay">Ooredoo Dinar</label>
+                      <img src="https://via.placeholder.com/50x30?text=Ooredoo" alt="Ooredoo Dinar" class="payment-logo" />
+                    </div>
+                    
+                    <div class="payment-option">
+                      <input type="radio" name="mobile-method" id="orange-money" />
+                      <label for="orange-money">Orange Money</label>
+                      <img src="https://via.placeholder.com/50x30?text=Orange" alt="Orange Money" class="payment-logo" />
+                    </div>
+                  </div>
+                  
+                  <p class="mobile-pay-instructions">
+                    Scannez le QR code ci-dessous avec votre application de paiement mobile ou envoyez le montant à notre numéro de téléphone.
+                  </p>
+                  
+                  <img src="https://via.placeholder.com/200x200?text=QR+Code" alt="QR Code de paiement" class="mobile-pay-img" />
+                  
+                  <div class="form-group">
+                    <label for="mobile-number">Votre numéro de téléphone</label>
+                    <input type="tel" id="mobile-number" placeholder="+216 XX XXX XXX" required />
+                  </div>
+                </div>
+                
+                <!-- Contenu virement bancaire -->
+                <div class="payment-method-content" id="bank-transfer-content">
+                  <p>Veuillez effectuer un virement bancaire avec les informations suivantes :</p>
+                  
+                  <div class="transfer-details">
+                    <div class="transfer-detail">
+                      <span>Bénéficiaire</span>
+                      <span class="transfer-detail-value">
+                        RETT Restaurant SARL
+                        <button class="copy-btn" onclick="copyToClipboard('RETT Restaurant SARL')">
+                          <i class="far fa-copy"></i>
+                        </button>
+                      </span>
+                    </div>
+                    
+                    <div class="transfer-detail">
+                      <span>Banque</span>
+                      <span class="transfer-detail-value">
+                        Banque Nationale de Tunisie
+                        <button class="copy-btn" onclick="copyToClipboard('Banque Nationale de Tunisie')">
+                          <i class="far fa-copy"></i>
+                        </button>
+                      </span>
+                    </div>
+                    
+                    <div class="transfer-detail">
+                      <span>IBAN</span>
+                      <span class="transfer-detail-value">
+                        TN59 1234 5678 9012 3456 7890
+                        <button class="copy-btn" onclick="copyToClipboard('TN59 1234 5678 9012 3456 7890')">
+                          <i class="far fa-copy"></i>
+                        </button>
+                      </span>
+                    </div>
+                    
+                    <div class="transfer-detail">
+                      <span>Code BIC/SWIFT</span>
+                      <span class="transfer-detail-value">
+                        BNTETNTT
+                        <button class="copy-btn" onclick="copyToClipboard('BNTETNTT')">
+                          <i class="far fa-copy"></i>
+                        </button>
+                      </span>
+                    </div>
+                    
+                    <div class="transfer-detail">
+                      <span>Référence</span>
+                      <span class="transfer-detail-value">
+                        RES-12345
+                        <button class="copy-btn" onclick="copyToClipboard('RES-12345')">
+                          <i class="far fa-copy"></i>
+                        </button>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <p class="note">
+                    <i class="fas fa-info-circle"></i> 
+                    Veuillez inclure le numéro de référence de votre réservation dans le libellé du virement pour faciliter le traitement.
+                  </p>
+                  
+                  <div class="form-group">
+                    <label for="transfer-email">Email pour la confirmation</label>
+                    <input type="email" id="transfer-email" placeholder="Votre email pour recevoir la confirmation" required />
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="payment-summary">
+              <h3>Récapitulatif</h3>
+              
+              <div class="summary-details">
+                <div class="detail-row">
+                  <span>Acompte réservation</span>
+                  <span>50 TND</span>
+                </div>
+                <div class="detail-row">
+                  <span>Menu présélectionné</span>
+                  <span>0 TND</span>
+                </div>
+              </div>
+              
+              <div class="coupon-form">
+                <input type="text" placeholder="Code promo" id="coupon-code" />
+                <button type="button" onclick="applyCoupon()">Appliquer</button>
+              </div>
+              
+              <div class="summary-item">
+                <span>Sous-total</span>
+                <span>50 TND</span>
+              </div>
+              
+              <div class="summary-item" id="discount-row" style="display: none;">
+                <span>Réduction</span>
+                <span>-5 TND</span>
+              </div>
+              
+              <div class="summary-item">
+                <span>Frais de service (3%)</span>
+                <span>1.50 TND</span>
+              </div>
+              
+              <div class="summary-total">
+                <span>Total</span>
+                <span id="total-amount">51.50 TND</span>
+              </div>
+              
+              <div class="payment-actions">
+                <button class="btn pay-btn" onclick="processPayment()">
+                  <i class="fas fa-lock"></i> Payer maintenant
+                </button>
+                
+                <div class="secure-notice">
+                  <i class="fas fa-shield-alt"></i>
+                  <span>Paiement 100% sécurisé</span>
+                </div>
+              </div>
+              
+              <div class="payment-help">
+                Besoin d'aide ? <a href="#">Contactez-nous</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    
+    <!-- Modal de succès -->
+    <div class="modal-overlay" id="success-modal">
+      <div class="success-modal">
+        <div class="success-icon">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h3 class="success-title">Paiement réussi !</h3>
+        <p class="success-message">
+          Votre paiement a été traité avec succès. Une confirmation a été envoyée à votre adresse email.
+        </p>
+        <div class="success-actions">
+          <a href="mes-reservations.html" class="btn primary-btn">Voir mes réservations</a>
+          <a href="index.html" class="btn secondary-btn">Retour à l'accueil</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h3>RETT Restaurant</h3>
+            <p>Cuisine tunisienne authentique</p>
+          </div>
+          
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4>Menu</h4>
+              <ul>
+                <li><a href="index.html#about">À propos</a></li>
+                <li><a href="index.html#menu">Menu</a></li>
+                <li><a href="index.html#reserve">Réservation</a></li>
+                <li><a href="mes-reservations.html">Mes réservations</a></li>
+                <li><a href="index.html#contact">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div class="footer-column">
+              <h4>Légal</h4>
+              <ul>
+                <li><a href="#">Mentions légales</a></li>
+                <li><a href="#">Politique de confidentialité</a></li>
+                <li><a href="#">CGV</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2025 RETT Restaurant. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+      // Mobile menu toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        if (mobileMenu) {
+          mobileMenu.addEventListener('click', function() {
+            navLinks.classList.toggle('show');
+            mobileMenu.classList.toggle('active');
+          });
+        }
+        
+        // Onglets de méthodes de paiement
+        const paymentTabs = document.querySelectorAll('.payment-method-tab');
+        paymentTabs.forEach(tab => {
+          tab.addEventListener('click', function() {
+            paymentTabs.forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.payment-method-content').forEach(content => {
+              content.classList.remove('active');
+            });
+            this.classList.add('active');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`${tabId}-content`).classList.add('active');
+          });
+        });
+        
+        // Options de paiement mobile
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        paymentOptions.forEach(option => {
+          option.addEventListener('click', function() {
+            paymentOptions.forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+          });
+        });
+      });
+      
+      // Fonction pour copier le texte dans le presse-papier
+      function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Copié dans le presse-papier !');
+        }).catch(err => {
+          console.error('Erreur lors de la copie :', err);
+        });
+      }
+      
+      // Fonction pour appliquer un code promo
+      function applyCoupon() {
+        const couponCode = document.getElementById('coupon-code').value.trim();
+        const totalElement = document.getElementById('total-amount');
+        const discountInfo = document.getElementById('discount-row');
+        const originalTotal = parseFloat(totalElement.textContent.split(' ')[1]);
+        const coupons = {
+          "RETT10": 0.10,
+          "RETT20": 0.20
+        };
+        if (coupons[couponCode]) {
+          const discount = coupons[couponCode];
+          const newTotal = originalTotal * (1 - discount);
+          totalElement.textContent = `Total : ${newTotal.toFixed(2)} TND`;
+          discountInfo.style.display = 'block';
+          discountInfo.textContent = `Code promo "${couponCode}" appliqué : -${discount * 100}%`;
+        } else {
+          totalElement.textContent = `Total : ${originalTotal.toFixed(2)} TND`;
+          discountInfo.style.display = 'none';
+          discountInfo.textContent = "Code promo invalide.";
+        }
+      }
+    
+      // Fonction pour traiter le paiement
+      function processPayment() {
+        const form = document.querySelector('.card-form');
+        const formData = new FormData(form);
+        
+        fetch(form.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': csrftoken
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === 'success') {
+            document.getElementById('success-modal').classList.add('active');
+          } else {
+            alert(data.message || 'Une erreur est survenue lors du paiement.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Une erreur est survenue lors du paiement.');
+        });
+      }
+
+      // Add CSRF token to all AJAX requests
+      function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+      
+      const csrftoken = getCookie('csrftoken');
+    </script>
+  </body>
+</html>

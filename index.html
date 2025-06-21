@@ -1,0 +1,437 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="RETT Restaurant - Une expérience culinaire tunisienne authentique" />
+    <title>RETT Restaurant | Cuisine Tunisienne</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{% static 'restaurant/images/favicon.png' %}" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'restaurant/css/styles.css' %}" />
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin="" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  </head>
+  <body>
+    <!-- Header avec navigation -->
+    <header>
+      <div class="navbar">
+        <div class="logo">
+          <h1>RETT Restaurant</h1>
+          <p class="tagline">Cuisine tunisienne authentique</p>
+        </div>
+        
+        <div class="menu-toggle" id="mobile-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        
+        <nav>
+          <ul class="nav-links">
+            <li><a href="{% url 'index' %}#hero"><i class="fas fa-home"></i> Accueil</a></li>
+            <li><a href="{% url 'index' %}#menu"><i class="fas fa-utensils"></i> Menu</a></li>
+            <li><a href="{% url 'index' %}#reserve"><i class="fas fa-calendar-alt"></i> Réserver</a></li>
+            <li><a href="{% url 'reservations' %}"><i class="fas fa-list-check"></i> Mes réservations</a></li>
+            <li><a href="{% url 'index' %}#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+          </ul>
+        </nav>
+
+        <!-- Boutons de connexion déplacés dans la navbar -->
+        <div class="user-actions">
+          {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="btn login-btn"><i class="fas fa-sign-out-alt"></i> Déconnexion</a>
+          {% else %}
+            <a href="{% url 'login_page' %}" class="btn login-btn"><i class="fas fa-user"></i> Connexion</a>
+          {% endif %}
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="hero-content">
+        <h2 class="fade-in">Une Expérience Culinaire Tunisienne</h2>
+        <p class="fade-in">Découvrez les saveurs authentiques de la cuisine tunisienne dans un cadre élégant à Bizerte</p>
+        <div class="cta-buttons fade-in">
+          <a href="#menu" class="btn primary-btn">Découvrir notre menu</a>
+          <a href="#reserve" class="btn secondary-btn">Réserver une table</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- À propos Section -->
+    <section id="about" class="about-section">
+      <div class="container">
+        <h2>Notre Histoire</h2>
+        <div class="about-content">
+          <div class="about-text">
+            <p>Fondé en 2020, RETT Restaurant est né de la passion pour la cuisine tunisienne traditionnelle avec une touche moderne. Notre chef exécutif, avec plus de 15 ans d'expérience, crée des plats qui racontent une histoire.</p>
+            <p>Nous privilégions les ingrédients locaux et de saison, travaillant en étroite collaboration avec les producteurs de la région pour vous offrir une expérience authentique.</p>
+          </div>
+          <div class="about-image">
+            <img src="{% static 'restaurant/images/rest.png' %}" alt="Intérieur du RETT Restaurant" onerror="this.src='https://via.placeholder.com/500x300?text=RETT+Restaurant';this.onerror='';" />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu" class="menu-section">
+      <div class="container">
+        <h2>Notre Menu Tunisien</h2>
+        
+        <!-- Catégorie Entrées -->
+        <div class="menu-category-section">
+          <h3>Entrées</h3>
+          <div class="menu-items">
+            {% for item in entrees %}
+            <div class="menu-item" data-category="entrees">
+              <div class="menu-item-info">
+                <h4>{{ item.name }}</h4>
+                <p class="menu-item-description">{{ item.description }}</p>
+                <img src="{% static item.image %}" alt="{{ item.name }}">
+                <p class="menu-item-price">{{ item.price }} TND</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Catégorie Plats principaux -->
+        <div class="menu-category-section">
+          <h3>Plats principaux</h3>
+          <div class="menu-items">
+            {% for item in plats %}
+            <div class="menu-item" data-category="plats">
+              <div class="menu-item-info">
+                <h4>{{ item.name }}</h4>
+                <p class="menu-item-description">{{ item.description }}</p>
+                <img src="{% static item.image %}" alt="{{ item.name }}">
+                <p class="menu-item-price">{{ item.price }} TND</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Catégorie Desserts -->
+        <div class="menu-category-section">
+          <h3>Desserts</h3>
+          <div class="menu-items">
+            {% for item in desserts %}
+            <div class="menu-item" data-category="desserts">
+              <div class="menu-item-info">
+                <h4>{{ item.name }}</h4>
+                <p class="menu-item-description">{{ item.description }}</p>
+                <img src="{% static item.image %}" alt="{{ item.name }}">
+                <p class="menu-item-price">{{ item.price }} TND</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <!-- Catégorie Boissons -->
+        <div class="menu-category-section">
+          <h3>Boissons</h3>
+          <div class="menu-items">
+            {% for item in boissons %}
+            <div class="menu-item" data-category="boissons">
+              <div class="menu-item-info">
+                <h4>{{ item.name }}</h4>
+                <p class="menu-item-description">{{ item.description }}</p>
+                <img src="{% static item.image %}" alt="{{ item.name }}">
+                <p class="menu-item-price">{{ item.price }} TND</p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reservation Section -->
+    <section id="reserve" class="reserve-section">
+      <div class="container">
+        <h2>Réserver une Table</h2>
+        <form id="reservation-form" class="reservation-form" method="post" action="{% url 'create_reservation' %}">
+          {% csrf_token %}
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Nom complet</label>
+              <input type="text" id="name" name="name" placeholder="Votre nom" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="Votre email" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="phone">Téléphone</label>
+              <input type="tel" id="phone" name="phone" placeholder="Votre numéro de téléphone" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="date">Date</label>
+              <input type="date" id="date" name="date" required />
+            </div>
+            <div class="form-group">
+              <label for="time">Heure</label>
+              <input type="time" id="time" name="time" required />
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="guests">Nombre de personnes</label>
+              <select id="guests" name="number_of_guests" required>
+                <option value="">Sélectionner</option>
+                {% for i in "123456"|make_list %}
+                  <option value="{{ i }}">{{ i }} personne{{ i|pluralize }}</option>
+                {% endfor %}
+                <option value="more">Plus de 6 personnes</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="occasion">Occasion</label>
+              <select id="occasion" name="occasion">
+                <option value="">Sélectionner (optionnel)</option>
+                {% for value, label in occasion_choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="zone">Zone</label>
+              <select id="zone" name="zone" required>
+                <option value="">Sélectionnez une zone</option>
+                {% for value, label in zone_choices %}
+                  <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="message">Demandes spéciales</label>
+            <textarea id="message" name="special_requests" placeholder="Allergies, préférences ou autres demandes spéciales"></textarea>
+          </div>
+          
+          <div class="reservation-actions">
+            <button type="submit" class="btn primary-btn" id="confirm-reservation-btn">Confirmer la réservation</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Map Section -->
+    <section id="contact" class="contact-section">
+      <div class="container">
+        <h2>Nous Trouver</h2>
+        <div class="contact-container">
+          <div class="contact-info">
+            <div class="contact-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <div>
+                <h3>Adresse</h3>
+                <p>Marina<br>Bizerte, Tunisie</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <h3>Téléphone</h3>
+                <p>+216 20 000 000</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <h3>Email</h3>
+                <p>contact@rettrestaurant.com</p>
+              </div>
+            </div>
+            
+            <div class="contact-item">
+              <i class="fas fa-clock"></i>
+              <div>
+                <h3>Horaires</h3>
+                <p>Lun-Ven : 12h-22h30<br>
+                   Sam-Dim : 11h-23h30</p>
+              </div>
+            </div>
+            
+            <div class="social-links">
+              <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="social-link"><i class="fab fa-tripadvisor"></i></a>
+            </div>
+          </div>
+          
+          <div class="map-container" id="map-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-logo">
+            <h3>RETT Restaurant</h3>
+            <p>Cuisine tunisienne authentique</p>
+          </div>
+          
+          <div class="footer-links">
+            <div class="footer-column">
+              <h4>Menu</h4>
+              <ul>
+                <li><a href="{% url 'index' %}#about">À propos</a></li>
+                <li><a href="{% url 'index' %}#menu">Menu</a></li>
+                <li><a href="{% url 'index' %}#reserve">Réservation</a></li>
+                <li><a href="{% url 'reservations' %}">Mes réservations</a></li>
+                <li><a href="{% url 'index' %}#contact">Contact</a></li>
+              </ul>
+            </div>
+            
+            <div class="footer-column">
+              <h4>Légal</h4>
+              <ul>
+                <li><a href="#">Mentions légales</a></li>
+                <li><a href="#">Politique de confidentialité</a></li>
+                <li><a href="#">CGV</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; {% now "Y" %} RETT Restaurant. Tous droits réservés.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <!-- Custom JS -->
+    <script>
+      // Mobile menu toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navLinks = document.querySelector('.nav-links');
+        
+        if (mobileMenu) {
+          mobileMenu.addEventListener('click', function() {
+            navLinks.classList.toggle('show');
+            mobileMenu.classList.toggle('active');
+          });
+        }
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+          anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+              window.scrollTo({
+                top: target.offsetTop - 80, // Offset for fixed header
+                behavior: 'smooth'
+              });
+              
+              // Close mobile menu if open
+              if (navLinks.classList.contains('show')) {
+                navLinks.classList.remove('show');
+                mobileMenu.classList.remove('active');
+              }
+            }
+          });
+        });
+        
+        // Initialize Leaflet map
+        const map = L.map('map-container').setView([37.27449787979121, 9.882468768884424], 15); // Coordonnées pour Bizerte
+        
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+        
+        // Add restaurant marker
+        const restaurantIcon = L.icon({
+          iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.3.4/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        });
+        
+        L.marker([37.27449787979121, 9.882468768884424], {icon: restaurantIcon})
+          .addTo(map)
+          .bindPopup('<strong>RETT Restaurant</strong><br>Marina<br>Bizerte')
+          .openPopup();
+
+        // Reservation form handling
+        const reservationForm = document.getElementById('reservation-form');
+        if (reservationForm) {
+          reservationForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get CSRF token
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            // Collect form data
+            const formData = new FormData(reservationForm);
+            
+            // Send reservation request
+            fetch(reservationForm.action, {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'X-CSRFToken': csrftoken
+              }
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.status === 'success') {
+                alert('Réservation confirmée !');
+                reservationForm.reset();
+                window.location.href = data.redirect_url;
+              } else {
+                alert(data.message || 'Une erreur est survenue lors de la réservation.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('Une erreur est survenue lors de la réservation.');
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
